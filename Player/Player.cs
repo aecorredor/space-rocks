@@ -17,6 +17,8 @@ public partial class Player : RigidBody2D
 
     [Export]
     int enginePower = 500;
+
+    [Export]
     int spinPower = 8000;
 
     Vector2 thrust = Vector2.Zero;
@@ -40,8 +42,6 @@ public partial class Player : RigidBody2D
     {
         ConstantForce = thrust;
         ConstantTorque = rotationDir * spinPower;
-        Debug.WriteLine("ConstantTorque: " + ConstantTorque);
-        Debug.WriteLine("ConstantForce: " + ConstantForce);
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState2D physicsState)
@@ -52,7 +52,7 @@ public partial class Player : RigidBody2D
         physicsState.Transform = xform;
     }
 
-    private void getInput()
+    void getInput()
     {
         thrust = Vector2.Zero;
         PlayerState[] invalidStates = { PlayerState.Init, PlayerState.Dead };
@@ -65,22 +65,20 @@ public partial class Player : RigidBody2D
         // check if player state array includes state
         if (Input.IsActionPressed("thrust"))
         {
-            // log thrust
-            Debug.WriteLine("Thrusting");
             thrust = Transform.X * enginePower;
         }
 
         rotationDir = Input.GetAxis("rotate_left", "rotate_right");
     }
 
-    private void changeState(PlayerState newState)
+    void changeState(PlayerState newState)
     {
         CollisionShape2D collisionShape = GetNode<CollisionShape2D>("CollisionShape2D");
 
         switch (state)
         {
             case PlayerState.Init:
-                collisionShape.SetDeferred("disabled", true);
+                collisionShape.SetDeferred("disabled", false);
                 break;
 
             case PlayerState.Alive:
