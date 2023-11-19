@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Bullet : Area2D
+public partial class bullet : Area2D
 {
     [Export]
     int speed = 100;
@@ -28,7 +28,7 @@ public partial class Bullet : Area2D
         QueueFree();
     }
 
-    public void _on_Bullet_body_entered(Node body)
+    public void _on_bullet_body_entered(Node body)
     {
         if (body.IsInGroup("rocks") && body.HasMethod("explode"))
         {

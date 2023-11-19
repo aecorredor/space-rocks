@@ -11,7 +11,7 @@ enum PlayerState
     Dead
 }
 
-public partial class Player : RigidBody2D
+public partial class player : RigidBody2D
 {
     PlayerState state = PlayerState.Init;
 
@@ -20,6 +20,14 @@ public partial class Player : RigidBody2D
 
     [Export]
     int spinPower = 8000;
+
+    [Export]
+    PackedScene BulletScene;
+
+    [Export]
+    float fireRate = 0.25f;
+
+    bool canShoot = true;
 
     Vector2 thrust = Vector2.Zero;
     float rotationDir = 0;
@@ -30,6 +38,7 @@ public partial class Player : RigidBody2D
     {
         screenSize = GetViewportRect().Size;
         changeState(PlayerState.Alive);
+        GetNode<Timer>("GunCooldown").WaitTime = fireRate;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -52,6 +61,11 @@ public partial class Player : RigidBody2D
         physicsState.Transform = xform;
     }
 
+    public void _on_gun_cooldown_timeout()
+    {
+        canShoot = true;
+    }
+
     void getInput()
     {
         thrust = Vector2.Zero;
@@ -66,6 +80,20 @@ public partial class Player : RigidBody2D
         if (Input.IsActionPressed("thrust"))
         {
             thrust = Transform.X * enginePower;
+        }
+
+        if (Input.IsActionJustPressed("shoot") && canShoot)
+        {
+            if (state == PlayerState.Invulnerable)
+            {
+                return;
+            }
+
+            canShoot = false;
+            GetNode<Timer>("GunCooldown").Start();
+            var bullet = BulletScene.Instantiate() as bullet;
+            GetTree().Root.AddChild(bullet);
+            bullet.start(GetNode<Marker2D>("Muzzle").GlobalTransform);
         }
 
         rotationDir = Input.GetAxis("rotate_left", "rotate_right");
