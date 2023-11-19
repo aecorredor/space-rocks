@@ -28,7 +28,7 @@ public partial class bullet : Area2D
         QueueFree();
     }
 
-    public void _on_bullet_body_entered(Node body)
+    public void _on_body_entered(Node body)
     {
         if (body.IsInGroup("rocks") && body.HasMethod("explode"))
         {

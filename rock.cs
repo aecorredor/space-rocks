@@ -3,6 +3,14 @@ using System;
 
 public partial class rock : RigidBody2D
 {
+    [Signal]
+    public delegate void ExplodeEventHandler(
+        int size,
+        float radius,
+        Vector2 position,
+        Vector2 velocity
+    );
+
     public Vector2 screenSize = Vector2.Zero;
     int size;
     float radius;
@@ -38,5 +46,22 @@ public partial class rock : RigidBody2D
         GetNode<CollisionShape2D>("CollisionShape2D").Shape = shape;
         LinearVelocity = velocity;
         AngularVelocity = (float)GD.RandRange(-Math.PI, Math.PI);
+        GetNode<Sprite2D>("Explosion").Scale = Vector2.One * 0.75f * size;
+    }
+
+    public async void explode()
+    {
+        var colShape = GetNode<CollisionShape2D>("CollisionShape2D");
+        colShape.SetDeferred("disabled", true);
+        var sprite = GetNode<Sprite2D>("Sprite2D");
+        sprite.Hide();
+        var animation = GetNode<AnimationPlayer>("Explosion/AnimationPlayer");
+        animation.Play("explosion");
+        GetNode<Sprite2D>("Explosion").Show();
+        EmitSignal(SignalName.Explode, size, radius, Position, LinearVelocity);
+        LinearVelocity = Vector2.Zero;
+        AngularVelocity = 0;
+        await ToSignal(animation, "animation_finished");
+        QueueFree();
     }
 }
