@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 
 public partial class main : Node2D
 {
@@ -8,13 +9,54 @@ public partial class main : Node2D
 
     Vector2 screenSize = Vector2.Zero;
 
+    int level = 0;
+    int score = 0;
+    bool playing = false;
+
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
         screenSize = GetViewportRect().Size;
+    }
 
-        // loop 3
-        for (int i = 0; i < 3; i++)
+    public override void _Process(double delta)
+    {
+        if (!playing)
+        {
+            return;
+        }
+
+        if (GetTree().GetNodesInGroup("rocks").Count() == 0)
+        {
+            newLevel();
+        }
+    }
+
+    private void newGame()
+    {
+        // remove any old rocks from previous game
+        GetTree().CallGroup("rocks", "queue_free");
+        level = 0;
+        score = 0;
+        GetNode<hud>("HUD").updateScore(score);
+        GetNode<hud>("HUD").showMessage("Get Ready!");
+        // GetNode<player>("Player").reset();
+        GetNode<Timer>("HUD/Timer")
+            .Start();
+        playing = true;
+    }
+
+    private void gameOver()
+    {
+        playing = false;
+        GetNode<hud>("HUD").gameOver();
+    }
+
+    private void newLevel()
+    {
+        level += 1;
+        GetNode<hud>("HUD").showMessage($"Wave {level}");
+        for (int i = 0; i < level; i++)
         {
             spawnRock(3);
         }
@@ -59,7 +101,4 @@ public partial class main : Node2D
             spawnRock(size - 1, newpos, newvel);
         }
     }
-
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) { }
 }
