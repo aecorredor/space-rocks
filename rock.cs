@@ -4,7 +4,7 @@ using System;
 public partial class rock : RigidBody2D
 {
     [Signal]
-    public delegate void ExplodeEventHandler(
+    public delegate void ExplodedEventHandler(
         int size,
         float radius,
         Vector2 position,
@@ -58,7 +58,7 @@ public partial class rock : RigidBody2D
         var animation = GetNode<AnimationPlayer>("Explosion/AnimationPlayer");
         animation.Play("explosion");
         GetNode<Sprite2D>("Explosion").Show();
-        EmitSignal(SignalName.Explode, size, radius, Position, LinearVelocity);
+        EmitSignal(SignalName.Exploded, size, radius, Position, LinearVelocity);
         LinearVelocity = Vector2.Zero;
         AngularVelocity = 0;
         await ToSignal(animation, "animation_finished");

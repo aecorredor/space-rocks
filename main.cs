@@ -36,9 +36,28 @@ public partial class main : Node2D
 
         var rock = RockScene.Instantiate() as rock;
         rock.screenSize = screenSize;
-
         rock.start((Vector2)pos, (Vector2)vel, size);
         CallDeferred("add_child", rock);
+
+        rock.Connect(rock.SignalName.Exploded, new Callable(this, nameof(onRockExploded)));
+    }
+
+    void onRockExploded(int size, float radius, Vector2 pos, Vector2 velocity)
+    {
+        if (size <= 1)
+        {
+            return;
+        }
+
+        int[] offsets = { -1, 1 };
+        // Loop through the array using foreach
+        foreach (int offset in offsets)
+        {
+            var dir = GetNode<player>("Player").Position.DirectionTo(pos).Orthogonal() * offset;
+            var newpos = pos + dir * radius;
+            var newvel = dir * velocity.Length() * 1.1f;
+            spawnRock(size - 1, newpos, newvel);
+        }
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
