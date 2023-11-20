@@ -40,9 +40,8 @@ public partial class main : Node2D
     score = 0;
     GetNode<hud>("HUD").updateScore(score);
     GetNode<hud>("HUD").showMessage("Get Ready!");
-    // GetNode<player>("Player").reset();
-    GetNode<Timer>("HUD/Timer")
-      .Start();
+    GetNode<player>("Player").reset();
+    GetNode<Timer>("HUD/Timer").Start();
     playing = true;
   }
 

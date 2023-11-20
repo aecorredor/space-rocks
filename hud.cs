@@ -41,7 +41,7 @@ public partial class hud : CanvasLayer
     scoreLabel.Text = value.ToString();
   }
 
-  private void updateLives(int value)
+  public void updateLives(int value)
   {
     for (int i = 0; i < livesCounter.Length; i++)
     {

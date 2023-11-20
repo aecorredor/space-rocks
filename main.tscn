@@ -29,4 +29,6 @@ curve = SubResource("Curve2D_ox4cv")
 
 [node name="HUD" parent="." instance=ExtResource("5_oasmy")]
 
+[connection signal="Dead" from="Player" to="." method="gameOver"]
+[connection signal="LivesChanged" from="Player" to="HUD" method="updateLives"]
 [connection signal="StartGame" from="HUD" to="." method="newGame"]
