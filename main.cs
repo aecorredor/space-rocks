@@ -32,6 +32,28 @@ public partial class main : Node2D
     }
   }
 
+  public override void _Input(InputEvent @event)
+  {
+    if (@event.IsActionPressed("pause"))
+    {
+      if (!playing)
+        return;
+
+      GetTree().Paused = !GetTree().Paused;
+      var message = GetNode<Label>("HUD/VBoxContainer/Message");
+
+      if (GetTree().Paused)
+      {
+        message.Text = "Paused";
+        message.Show();
+      }
+      else
+      {
+        message.Hide();
+      }
+    }
+  }
+
   private void newGame()
   {
     // remove any old rocks from previous game

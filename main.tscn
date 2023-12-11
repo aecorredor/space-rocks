@@ -13,6 +13,7 @@ _data = {
 point_count = 5
 
 [node name="Main" type="Node2D"]
+process_mode = 3
 script = ExtResource("1_65dh4")
 RockScene = ExtResource("2_0lk6w")
 
@@ -28,6 +29,7 @@ curve = SubResource("Curve2D_ox4cv")
 [node name="RockSpawn" type="PathFollow2D" parent="RockPath"]
 
 [node name="HUD" parent="." instance=ExtResource("5_oasmy")]
+process_mode = 3
 
 [connection signal="Dead" from="Player" to="." method="gameOver"]
 [connection signal="LivesChanged" from="Player" to="HUD" method="updateLives"]
