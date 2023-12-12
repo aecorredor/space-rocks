@@ -16,7 +16,12 @@ public partial class enemy : Area2D
   [Export]
   int health = 3;
 
+  [Export]
+  float bulletSpread = 0.2f;
+
   PathFollow2D follow = new PathFollow2D();
+
+  public RigidBody2D player;
 
   // Called when the node enters the scene tree for the first time.
   public override void _Ready()
@@ -44,5 +49,57 @@ public partial class enemy : Area2D
     }
   }
 
-  private void _on_gun_cooldown_timeout() { }
+  public void shoot()
+  {
+    var dir = GlobalPosition.DirectionTo(player.GlobalPosition);
+    dir = dir.Rotated((float)GD.RandRange(-bulletSpread, bulletSpread));
+    var b = BulletScene.Instantiate() as enemy_bullet;
+    GetTree().Root.AddChild(b);
+    b.Start(GlobalPosition, dir);
+  }
+
+  public void takeDamage(int amount)
+  {
+    health -= amount;
+    GetNode<AnimationPlayer>("AnimationPlayer").Play("flash");
+
+    if (health <= 0)
+    {
+      explode();
+    }
+  }
+
+  private async void explode()
+  {
+    speed = 0;
+    GetNode<Timer>("GunCooldown").Stop();
+    GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("disabled", true);
+    GetNode<Sprite2D>("Sprite2D").Hide();
+    GetNode<Sprite2D>("Explosion").Show();
+    GetNode<AnimationPlayer>("Explosion/AnimationPlayer").Play("explosion");
+    GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("disabled", true);
+    var explosionSprite = GetNode<Sprite2D>("Explosion");
+    explosionSprite.Show();
+    var explosionAnimation = explosionSprite.GetNode<AnimationPlayer>(
+      "AnimationPlayer"
+    );
+    explosionAnimation.Play("explosion");
+    await ToSignal(explosionAnimation, "animation_finished");
+    QueueFree();
+  }
+
+  public void _on_body_entered(Node body)
+  {
+    if (body.IsInGroup("rocks"))
+    {
+      return;
+    }
+
+    explode();
+  }
+
+  private void _on_gun_cooldown_timeout()
+  {
+    shoot();
+  }
 }

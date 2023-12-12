@@ -34,6 +34,17 @@ public partial class bullet : Area2D
     {
       body.Call("explode");
       QueueFree();
+      return;
+    }
+  }
+
+  public void _on_area_entered(Area2D area)
+  {
+    if (area.IsInGroup("enemies") && area.HasMethod("takeDamage"))
+    {
+      area.Call("takeDamage", 1);
+      QueueFree();
+      return;
     }
   }
 }

@@ -93,9 +93,8 @@ public partial class main : Node2D
   {
     var e = EnemyScene.Instantiate() as enemy;
     AddChild(e);
-    // e.Target = GetNode<player>("Player");
-    GetNode<Timer>("EnemyTimer")
-      .Start(GD.RandRange(20, 40));
+    e.player = GetNode<player>("Player");
+    GetNode<Timer>("EnemyTimer").Start(GD.RandRange(20, 40));
   }
 
   void spawnRock(

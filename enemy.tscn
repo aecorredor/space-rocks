@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://dqv1eslrsttpq"]
+[gd_scene load_steps=9 format=3 uid="uid://dqv1eslrsttpq"]
 
 [ext_resource type="Script" path="res://enemy.cs" id="1_873j1"]
 [ext_resource type="Texture2D" uid="uid://gx7qnove4ppi" path="res://assets/enemy_saucer.png" id="1_k5mrv"]
 [ext_resource type="PackedScene" uid="uid://cl0kbw80vm6pd" path="res://enemy_paths.tscn" id="2_v0gpj"]
+[ext_resource type="PackedScene" uid="uid://bkdhh0h5l2gew" path="res://enemy_bullet.tscn" id="2_xc8lm"]
 [ext_resource type="PackedScene" uid="uid://cfnfy61p5vhqt" path="res://explosion.tscn" id="3_pslmt"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rc124"]
@@ -32,6 +33,7 @@ _data = {
 
 [node name="Area2D" type="Area2D" groups=["enemies"]]
 script = ExtResource("1_873j1")
+BulletScene = ExtResource("2_xc8lm")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_k5mrv")
@@ -42,16 +44,17 @@ shape = SubResource("CircleShape2D_rc124")
 
 [node name="EnemyPaths" parent="." instance=ExtResource("2_v0gpj")]
 
+[node name="Explosion" parent="." instance=ExtResource("3_pslmt")]
+visible = false
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_2h2ql")
 }
 
-[node name="Explosion" parent="." instance=ExtResource("3_pslmt")]
-visible = false
-
 [node name="GunCooldown" type="Timer" parent="."]
 wait_time = 1.5
 autostart = true
 
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
