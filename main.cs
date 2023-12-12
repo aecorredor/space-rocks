@@ -7,6 +7,9 @@ public partial class main : Node2D
   [Export]
   PackedScene RockScene;
 
+  [Export]
+  PackedScene EnemyScene;
+
   Vector2 screenSize = Vector2.Zero;
 
   int level = 0;
@@ -77,10 +80,22 @@ public partial class main : Node2D
   {
     level += 1;
     GetNode<hud>("HUD").showMessage($"Wave {level}");
+
     for (int i = 0; i < level; i++)
     {
       spawnRock(3);
     }
+
+    GetNode<Timer>("EnemyTimer").Start(GD.RandRange(5, 10));
+  }
+
+  public void _on_enemy_timer_timeout()
+  {
+    var e = EnemyScene.Instantiate() as enemy;
+    AddChild(e);
+    // e.Target = GetNode<player>("Player");
+    GetNode<Timer>("EnemyTimer")
+      .Start(GD.RandRange(20, 40));
   }
 
   void spawnRock(
@@ -92,7 +107,7 @@ public partial class main : Node2D
     if (pos == null)
     {
       var rockSpawn = GetNode<PathFollow2D>("RockPath/RockSpawn");
-      rockSpawn.Progress = new Random().Next(0, 100);
+      rockSpawn.Progress = GD.RandRange(0, 100);
       pos = rockSpawn.Position;
     }
 

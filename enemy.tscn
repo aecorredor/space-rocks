@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://dqv1eslrsttpq"]
+
+[ext_resource type="Script" path="res://enemy.cs" id="1_873j1"]
+[ext_resource type="Texture2D" uid="uid://gx7qnove4ppi" path="res://assets/enemy_saucer.png" id="1_k5mrv"]
+[ext_resource type="PackedScene" uid="uid://cl0kbw80vm6pd" path="res://enemy_paths.tscn" id="2_v0gpj"]
+[ext_resource type="PackedScene" uid="uid://cfnfy61p5vhqt" path="res://explosion.tscn" id="3_pslmt"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rc124"]
+radius = 37.1214
+
+[sub_resource type="Animation" id="Animation_gxdem"]
+resource_name = "flash"
+length = 0.25
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.980392, 0, 0.0588235, 1), Color(1, 1, 1, 1), Color(0.980392, 0, 0.0588235, 1), Color(1, 1, 1, 1), Color(0.980392, 0, 0.0588235, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2h2ql"]
+_data = {
+"flash": SubResource("Animation_gxdem")
+}
+
+[node name="Area2D" type="Area2D" groups=["enemies"]]
+script = ExtResource("1_873j1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_k5mrv")
+hframes = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_rc124")
+
+[node name="EnemyPaths" parent="." instance=ExtResource("2_v0gpj")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_2h2ql")
+}
+
+[node name="Explosion" parent="." instance=ExtResource("3_pslmt")]
+visible = false
+
+[node name="GunCooldown" type="Timer" parent="."]
+wait_time = 1.5
+autostart = true
+
+[connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
