@@ -62,7 +62,7 @@ public partial class player : RigidBody2D
   public override void _Process(double delta)
   {
     getInput();
-    // Shield += shieldRegen * (float)delta;
+    Shield += shieldRegen * (float)delta;
   }
 
   public override void _PhysicsProcess(double delta)
