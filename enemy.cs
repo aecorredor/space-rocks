@@ -51,6 +51,7 @@ public partial class enemy : Area2D
 
   public void shoot()
   {
+    GetNode<AudioStreamPlayer>("ShootSound").Play();
     var dir = GlobalPosition.DirectionTo(player.GlobalPosition);
     dir = dir.Rotated((float)GD.RandRange(-bulletSpread, bulletSpread));
     var b = BulletScene.Instantiate() as enemy_bullet;
@@ -71,6 +72,7 @@ public partial class enemy : Area2D
 
   private async void explode()
   {
+    GetNode<AudioStreamPlayer>("ExplosionSound").Play();
     speed = 0;
     GetNode<Timer>("GunCooldown").Stop();
     GetNode<CollisionShape2D>("CollisionShape2D").SetDeferred("disabled", true);

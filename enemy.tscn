@@ -1,10 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://dqv1eslrsttpq"]
+[gd_scene load_steps=11 format=3 uid="uid://dqv1eslrsttpq"]
 
 [ext_resource type="Script" path="res://enemy.cs" id="1_873j1"]
 [ext_resource type="Texture2D" uid="uid://gx7qnove4ppi" path="res://assets/enemy_saucer.png" id="1_k5mrv"]
 [ext_resource type="PackedScene" uid="uid://cl0kbw80vm6pd" path="res://enemy_paths.tscn" id="2_v0gpj"]
 [ext_resource type="PackedScene" uid="uid://bkdhh0h5l2gew" path="res://enemy_bullet.tscn" id="2_xc8lm"]
 [ext_resource type="PackedScene" uid="uid://cfnfy61p5vhqt" path="res://explosion.tscn" id="3_pslmt"]
+[ext_resource type="AudioStream" uid="uid://ybl0fun5ihd8" path="res://assets/sounds/enemy_laser.wav" id="6_0kv54"]
+[ext_resource type="AudioStream" uid="uid://dj5i130ylo3nd" path="res://assets/sounds/explosion.wav" id="6_ffqco"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rc124"]
 radius = 37.1214
@@ -55,6 +57,13 @@ libraries = {
 [node name="GunCooldown" type="Timer" parent="."]
 wait_time = 1.5
 autostart = true
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_ffqco")
+
+[node name="ShootSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_0kv54")
+volume_db = -10.0
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
