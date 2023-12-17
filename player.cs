@@ -26,7 +26,7 @@ public partial class player : RigidBody2D
   float maxShield = 100.0f;
 
   [Export]
-  float shieldRegen = 5.0f;
+  float shieldRegen = 2.50f;
 
   [Export]
   int enginePower = 500;
@@ -113,7 +113,7 @@ public partial class player : RigidBody2D
       {
         Lives -= 1;
         explode();
-        shield = maxShield;
+        Shield = maxShield;
       }
     }
   }
