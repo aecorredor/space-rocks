@@ -167,10 +167,17 @@ public partial class player : RigidBody2D
     if (Input.IsActionPressed("thrust"))
     {
       thrust = Transform.X * enginePower;
+      var EngineSound = GetNode<AudioStreamPlayer>("EngineSound");
+
+      if (!EngineSound.Playing)
+      {
+        EngineSound.Play();
+      }
     }
 
     if (Input.IsActionJustPressed("shoot") && canShoot)
     {
+      GetNode<AudioStreamPlayer>("LaserSound").Play();
       canShoot = false;
       GetNode<Timer>("GunCooldown").Start();
       var bullet = BulletScene.Instantiate() as bullet;
@@ -213,6 +220,7 @@ public partial class player : RigidBody2D
         sprite.Hide();
         LinearVelocity = Vector2.Zero;
         EmitSignal(SignalName.Dead);
+        GetNode<AudioStreamPlayer>("EngineSound").Stop();
         break;
       }
     }
