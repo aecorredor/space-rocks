@@ -59,6 +59,7 @@ public partial class main : Node2D
 
   private void newGame()
   {
+    GetNode<AudioStreamPlayer>("Music").Play();
     // remove any old rocks from previous game
     GetTree().CallGroup("rocks", "queue_free");
     level = 0;
@@ -72,12 +73,14 @@ public partial class main : Node2D
 
   private void gameOver()
   {
+    GetNode<AudioStreamPlayer>("Music").Stop();
     playing = false;
     GetNode<hud>("HUD").gameOver();
   }
 
   private void newLevel()
   {
+    GetNode<AudioStreamPlayer>("LevelupSound").Play();
     level += 1;
     GetNode<hud>("HUD").showMessage($"Wave {level}");
 
@@ -130,6 +133,8 @@ public partial class main : Node2D
 
   void onRockExploded(int size, float radius, Vector2 pos, Vector2 velocity)
   {
+    GetNode<AudioStreamPlayer>("ExplosionSound").Play();
+
     if (size <= 1)
     {
       return;
