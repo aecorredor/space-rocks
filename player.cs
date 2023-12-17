@@ -154,6 +154,7 @@ public partial class player : RigidBody2D
 
   void getInput()
   {
+    GetNode<CpuParticles2D>("Exhaust").Emitting = false;
     thrust = Vector2.Zero;
     PlayerState[] noOpStates = { PlayerState.Init, PlayerState.Dead };
 
@@ -166,6 +167,7 @@ public partial class player : RigidBody2D
 
     if (Input.IsActionPressed("thrust"))
     {
+      GetNode<CpuParticles2D>("Exhaust").Emitting = true;
       thrust = Transform.X * enginePower;
       var EngineSound = GetNode<AudioStreamPlayer>("EngineSound");
 
