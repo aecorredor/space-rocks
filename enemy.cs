@@ -96,6 +96,11 @@ public partial class enemy : Area2D
     }
 
     explode();
+
+    if (body.Name == "Player")
+    {
+      (body as player).Shield -= 50;
+    }
   }
 
   private void _on_gun_cooldown_timeout()

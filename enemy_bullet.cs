@@ -6,6 +6,9 @@ public partial class enemy_bullet : Area2D
   [Export]
   int speed = 1000;
 
+  [Export]
+  int damage = 15;
+
   // Called when the node enters the scene tree for the first time.
   public override void _Ready() { }
 
@@ -21,8 +24,12 @@ public partial class enemy_bullet : Area2D
     Rotation = _Direction.Angle();
   }
 
-  public void _on_body_entered(Node node)
+  public void _on_body_entered(player body)
   {
+    if (body.Name == "Player")
+    {
+      body.Shield -= damage;
+    }
     QueueFree();
   }
 

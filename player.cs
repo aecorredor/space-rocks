@@ -6,7 +6,6 @@ enum PlayerState
 {
   Init,
   Alive,
-  Invulnerable,
   Dead
 }
 
@@ -19,6 +18,15 @@ public partial class player : RigidBody2D
 
   [Signal]
   public delegate void DeadEventHandler();
+
+  [Signal]
+  public delegate void ShieldChangedEventHandler();
+
+  [Export]
+  float maxShield = 100.0f;
+
+  [Export]
+  float shieldRegen = 5.0f;
 
   [Export]
   int enginePower = 500;
@@ -40,6 +48,7 @@ public partial class player : RigidBody2D
 
   bool resetPos = false;
   private int lives = 0;
+  private float shield = 100.0f;
 
   // Called when the node enters the scene tree for the first time.
   public override void _Ready()
@@ -53,6 +62,7 @@ public partial class player : RigidBody2D
   public override void _Process(double delta)
   {
     getInput();
+    // Shield += shieldRegen * (float)delta;
   }
 
   public override void _PhysicsProcess(double delta)
@@ -88,9 +98,22 @@ public partial class player : RigidBody2D
       {
         changeState(PlayerState.Dead);
       }
-      else
+    }
+  }
+
+  public float Shield
+  {
+    get { return shield; }
+    set
+    {
+      shield = Math.Min(value, maxShield);
+      EmitSignal(SignalName.ShieldChanged, shield / maxShield);
+
+      if (shield <= 0)
       {
-        changeState(PlayerState.Invulnerable);
+        Lives -= 1;
+        explode();
+        shield = maxShield;
       }
     }
   }
@@ -99,7 +122,7 @@ public partial class player : RigidBody2D
   {
     resetPos = true;
     GetNode<Sprite2D>("Sprite2D").Show();
-    lives = 3;
+    Lives = 3;
     changeState(PlayerState.Alive);
   }
 
@@ -108,18 +131,12 @@ public partial class player : RigidBody2D
     canShoot = true;
   }
 
-  public void _on_invulnerability_timer_timeout()
-  {
-    changeState(PlayerState.Alive);
-  }
-
-  public void _on_body_entered(Node body)
+  public void _on_body_entered(rock body)
   {
     if (body.IsInGroup("rocks") && body.HasMethod("explode"))
     {
+      Shield -= body.size * 25;
       body.Call("explode");
-      Lives -= 1;
-      explode();
     }
   }
 
@@ -154,11 +171,6 @@ public partial class player : RigidBody2D
 
     if (Input.IsActionJustPressed("shoot") && canShoot)
     {
-      if (state == PlayerState.Invulnerable)
-      {
-        return;
-      }
-
       canShoot = false;
       GetNode<Timer>("GunCooldown").Start();
       var bullet = BulletScene.Instantiate() as bullet;
@@ -169,6 +181,7 @@ public partial class player : RigidBody2D
 
   void changeState(PlayerState newState)
   {
+    state = newState;
     CollisionShape2D collisionShape = GetNode<CollisionShape2D>(
       "CollisionShape2D"
     );
@@ -194,24 +207,14 @@ public partial class player : RigidBody2D
         break;
       }
 
-      case PlayerState.Invulnerable:
-      {
-        collisionShape.SetDeferred("disabled", true);
-        var modulate = sprite.Modulate;
-        modulate.A = 0.5f;
-        sprite.Modulate = modulate;
-        GetNode<Timer>("InvulnerabilityTimer").Start();
-        break;
-      }
-
       case PlayerState.Dead:
+      {
         collisionShape.SetDeferred("disabled", true);
         sprite.Hide();
         LinearVelocity = Vector2.Zero;
         EmitSignal(SignalName.Dead);
         break;
+      }
     }
-
-    state = newState;
   }
 }

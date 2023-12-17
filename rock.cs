@@ -12,7 +12,7 @@ public partial class rock : RigidBody2D
   );
 
   public Vector2 screenSize = Vector2.Zero;
-  int size;
+  public int size;
   float radius;
   float scaleFactor = 0.2f;
 

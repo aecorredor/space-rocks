@@ -38,5 +38,6 @@ one_shot = true
 
 [connection signal="Dead" from="Player" to="." method="gameOver"]
 [connection signal="LivesChanged" from="Player" to="HUD" method="updateLives"]
+[connection signal="ShieldChanged" from="Player" to="HUD" method="updateShield"]
 [connection signal="StartGame" from="HUD" to="." method="newGame"]
 [connection signal="timeout" from="EnemyTimer" to="." method="_on_enemy_timer_timeout"]

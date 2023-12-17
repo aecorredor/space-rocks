@@ -32,10 +32,6 @@ autostart = true
 [node name="Explosion" parent="." instance=ExtResource("4_g62c3")]
 visible = false
 
-[node name="InvulnerabilityTimer" type="Timer" parent="."]
-wait_time = 2.0
-one_shot = true
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
-[connection signal="timeout" from="InvulnerabilityTimer" to="." method="_on_invulnerability_timer_timeout"]
